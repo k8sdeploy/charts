@@ -1,0 +1,17 @@
+apiVersion: v2
+name: k8sdeploy-agent
+version: 0.0.1
+appVersion: 0.0.1
+kubeVersion: ">=1.20.0"
+description: "Kubernetes Deployment"
+home: https://k8sdeploy.dev
+icon: https://k8sdeploy.dev/icon.png
+keywords:
+  - "Kubernetes Deployment"
+  - "ChewedFeed"
+  - "K8sDeploy"
+sources:
+  - https://github.com/k8sdeploy/helm-chart
+  - https://containers.chewedfeed.com/harbor/projects/k8sdeploy/helm-chart
+
+

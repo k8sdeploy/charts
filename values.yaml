@@ -1,0 +1,86 @@
+# Set how to expose the service. Set the type as "ingress", "clusterIP", "nodePort" or "loadBalancer"
+# and fill the information in the corresponding section
+expose:
+  type: ingress
+
+  tls:
+    # Enable TLS or not.
+    # Delete the "ssl-redirect" annotations in "expose.ingress.annotations" when TLS is disabled and "expose.type" is "ingress"
+    # Note: if the "expose.type" is "ingress" and TLS is disabled,
+    # the port must be included in the command when pulling/pushing images.
+    enabled: true
+
+    # The source of the tls certificate. Set as "auto", "secret"
+    # or "none" and fill the information in the corresponding section
+    # 1) auto: generate the tls certificate automatically
+    # 2) secret: read the tls certificate from the specified secret.
+    # The tls certificate can be generated manually or by cert manager
+    # 3) none: configure no tls certificate for the ingress. If the default
+    # tls certificate is configured in the ingress controller, choose this option
+    certSource: auto
+    auto:
+      commonName: ""
+    secret:
+      secretName: ""
+  ingress:
+    hosts:
+      agent: agent.domain
+    controller: default
+    className: ""
+    annotations:
+      ingress.kubernetes.io/ssl-redirect: "true"
+      ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+  clusterIP:
+    name: k8sdeploy
+    annotations: {}
+    ports:
+      httpPort: 80
+      httpsPort: 443
+  nodePort:
+    name: k8sdeploy
+    ports:
+      http:
+        port: 80
+      https:
+        port: 443
+  loadBalancer:
+    name: k8sdeploy
+    ports:
+      http:
+        port: 80
+      https:
+        port: 443
+    annotations: {}
+    sourceRanges: []
+
+externalURL: https://agent.domain
+
+internalTLS:
+  enabled: false
+  certSource: "auto"
+  trustCa: ""
+  agent:
+    secretName: ""
+    crt: ""
+    key: ""
+ipFamily:
+  ipv6: true
+  ipv4: true
+
+imagePullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+updateStrategy:
+  type: RollingUpdate
+
+caSecretName: ""
+
+namespaceOverride: ""
+
+agent:
+  name: "agent"
+  secretKey: ""
+  agentId: ""

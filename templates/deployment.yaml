@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+	name: {{ template "agent.name" . }}-agent
+	labels:
+		name: {{ template "agent.name" . }}-agent
+		app: {{ template "agent.name" . }}-agent
+spec:
+	replicas: 2
+	strategy:
+		rollingUpdate:
+			maxUnavailable: 1
+	selector:
+		matchLabels:
+			{{- include "agent.matchLabels" . | indent 4 }}
+	template:
+		metadata:
+			labels:
+				app: {{ template "agent.name" . }}-agent
+				name: {{ template "agent.name" . }}-agent
+		spec:
+			serviceAccountName: {{ template "agent.name" . }}-serviceaccount
+			containers:
+				- name: {{ template "agent.name" . }}-agent
+				  image: containers.chewedfeed.com/k8sdeploy/agent:latest
+          imagePullPolicy: Always
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+              - name: SERVICE_NAME
+                value: {{ template "agent.name" . }}
+              - name: K8SDEPLOY_AGENTID
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ template "agent.name" . }}-secret
+                    key: agentId
+              - name: K8SDEPLOY_SECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ template "agent.name" . }}-secret
+                    key: secretKey
